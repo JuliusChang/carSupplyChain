@@ -24,20 +24,20 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     // 指定图表的配置项和数据
     var option = {
         title: {
-            text: '第一个 ECharts 实例'
+            text: '订单'
         },
         tooltip: {},
         legend: {
-            data:['销量']
+            data:['数量']
         },
         xAxis: {
-            data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+            data: ["后视镜","玻璃","前灯","保险杠"]
         },
         yAxis: {},
         series: [{
-            name: '销量',
+            name: '数量',
             type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
+            data: [5, 20, 36, 10]
         }]
     };
 
@@ -48,8 +48,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     var myChart = echarts.init(document.getElementById('main1'));
     option = {
         title : {
-            text: '某站点用户访问来源',       //大标题
-            subtext: '纯属虚构',                //类似于副标题
+            text: '库存',       //大标题
+            subtext: '详细',                //类似于副标题
             x:'center'                 //标题位置   居中
         },
         tooltip : {
@@ -59,7 +59,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
         legend: {                           //图例组件。
             orient: 'vertical',             //图例列表的布局朝向
             left: 'left',
-            data: ['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+            data: ['后视镜','玻璃','前灯','保险杠']
         },
         series : [              //系列列表。每个系列通过 type 决定自己的图表类型
             {
@@ -68,11 +68,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 radius : '55%',
                 center: ['50%', '60%'],
                 data:[
-                    {value:335, name:'直接访问'},
-                    {value:310, name:'邮件营销'},
-                    {value:234, name:'联盟广告'},
-                    {value:135, name:'视频广告'},
-                    {value:1548, name:'搜索引擎'}
+                    {value:94, name:'后视镜'},
+                    {value:63, name:'前灯'},
+                    {value:79, name:'保险杠'},
+                    {value:89, name:'玻璃'},
                 ],
                 itemStyle: {
                     emphasis: {

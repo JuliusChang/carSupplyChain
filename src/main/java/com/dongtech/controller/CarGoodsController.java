@@ -6,7 +6,7 @@ import com.dongtech.vo.CarOrderDetails;
 import com.dongtech.vo.CarOrders;
 import com.dongtech.vo.Cart;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -179,5 +180,143 @@ public class CarGoodsController {
         }
         return buffer_2st.toString().substring(0, buffer_2st.toString().length() - 2);
     }
+    @RequestMapping("/addGoodsToCart")
+    @ResponseBody
+    public String addGoodsToCart(Integer goodsId,HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException{
+        List<Cart> cartVos = getCartInCookie(response,request);
+        Cookie cookie_2st;
+        CarGoods carGoods = new CarGoods();
+        try {
+            CarGoods carGoods1 = new CarGoods();
+            carGoods1.setId(Long.parseLong(goodsId+""));
+            List<CarGoods> cList = carVGoodsService.queryList(carGoods1);
+            carGoods = cList.get(0);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        if(cartVos.size() <= 0 ){
+            Cart cartVo = new Cart();
+            cartVo.setNum(1);
+            cartVo.setPrice(carGoods.getPrice().intValue());
+            cartVo.setId(carGoods.getId());
+            cartVo.setType(carGoods.getType());
+            cartVo.setName(carGoods.getName());
+            cartVo.setProduce(carGoods.getProduce());
+            cartVo.setDescription(carGoods.getDescription());
 
+            cartVos.add(cartVo);
+
+            if(getCookie(request)  == null){
+                cookie_2st = new Cookie("cart", URLEncoder.encode(makeCookieValue(cartVos),"utf-8"));
+                cookie_2st.setPath("/");
+                cookie_2st.setMaxAge(60 * 30);
+                response.addCookie(cookie_2st);
+            }else{
+                cookie_2st = getCookie(request);
+                cookie_2st.setPath("/");
+                cookie_2st.setMaxAge(60 * 30);
+                cookie_2st.setValue(URLEncoder.encode(makeCookieValue(cartVos)));
+                response.addCookie(cookie_2st);
+            }
+        }else{
+            int bj = 0;
+            for(Cart cart : cartVos){
+                if(cart.getId().equals(goodsId)){
+                    cart.setNum(cart.getNum() + 1);
+                    bj = 1;
+                    break;
+                }
+
+            }
+            if(bj == 0){
+                Cart cartVo = new Cart();
+                cartVo.setNum(1);
+                cartVo.setPrice(carGoods.getPrice().intValue());
+                cartVo.setId(carGoods.getId());
+                cartVo.setType(carGoods.getType());
+                cartVo.setName(carGoods.getName());
+                cartVo.setProduce(carGoods.getProduce());
+                cartVo.setDescription(carGoods.getDescription());
+
+                cartVos.add(cartVo);
+            }
+            cookie_2st = getCookie(request);
+            cookie_2st.setPath("/");
+            cookie_2st.setMaxAge(60 * 30);
+            cookie_2st.setValue(URLEncoder.encode(makeCookieValue(cartVos)));
+            response.addCookie(cookie_2st);
+        }
+        return cartVos.toString();
+    }
+    @RequestMapping("/getCart")
+    public ModelAndView getCart(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException{
+        List<Cart> cartInCookie = getCartInCookie(response, request);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("list",cartInCookie);
+        modelAndView.setViewName("carGoods/carlist");
+        return modelAndView;
+    }
+
+    @RequestMapping("/addorders")
+    public ModelAndView addOrders(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException{
+        List<Cart> cartInCookie = getCartInCookie(response,request);
+        carVGoodsService.saveOrders(cartInCookie);
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        List<CarGoods> list = new ArrayList<>();
+        try{
+            CarGoods carGoods = new CarGoods();
+            list = carVGoodsService.queryList(carGoods);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        modelAndView.addObject("list",list);
+        modelAndView.setViewName("carGoods/list");
+        return modelAndView;
+    }
+
+    @RequestMapping("/removeCartById")
+    public String removeCartById(HttpServletRequest request, HttpServletResponse response, @RequestParam(value="goodsId") Long goodsId) throws UnsupportedEncodingException {
+        // 从cookie中获取购物车列表
+        List<Cart> cartVos = getCartInCookie(response, request);
+        Cookie cookie_2st;
+        for (Cart cart : cartVos) {
+            // 如果购物车中存在，该商品则数量-1
+            if (cart.getId().equals(goodsId) && cart.getNum() >= 2) {
+                cart.setNum(cart.getNum() - 1);
+                break;
+            }
+            // 如果购物车中不存在直接删除
+            if (cart.getId().equals(goodsId) && cart.getNum() == 1) {
+                cartVos.remove(cart);
+                break;
+            }
+        }
+        // 如果购物车中还存在商品
+        if (cartVos.size() != 0) {
+            // 获取名为"cart"的cookie
+            cookie_2st = getCookie(request);
+            // 设置在该项目下都可以访问该cookie
+            cookie_2st.setPath("/");
+            // 设置cookie有效时间为30分钟
+            cookie_2st.setMaxAge(60 * 30);
+            // 设置value
+            cookie_2st.setValue(URLEncoder.encode(makeCookieValue(cartVos)));
+            response.addCookie(cookie_2st);
+            return "redirect:/cargoods/getCart";
+        } else {
+            // 如果购物车中不存在商品
+            return "redirect:/cargoods/removeCartAll";
+        }
+    }
+
+    @RequestMapping("/removeCartAll")
+    public String removeCartAll(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+        Cookie cookie = getCookie(request);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return "redirect:/cargoods/getCart";
+    }
 }

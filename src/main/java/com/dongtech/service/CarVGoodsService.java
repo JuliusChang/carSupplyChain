@@ -10,7 +10,7 @@ public interface CarVGoodsService {
 
     List<CarGoods> queryList(CarGoods carGoods) throws SQLException;
 
-
+    void saveOrders(List<Cart> cartInCookie);
 
     List<CarOrders> queryOrders();
 

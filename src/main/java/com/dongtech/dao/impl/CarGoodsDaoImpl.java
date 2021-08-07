@@ -6,6 +6,7 @@ import com.dongtech.util.JDBCUtil;
 import com.dongtech.vo.*;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -148,10 +149,55 @@ public class CarGoodsDaoImpl implements CarGoodsDao {
         return carOrderDetailsList;
     }
 
+    @Override
+    public void saveOrder(String number, BigDecimal price) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int id = 0;
+        try {
+            //1 加载数据库驱动  2 获取数据库连接
+            conn = JDBCUtil.getMysqlConn();
+            String sql = "INSERT INTO test.car_orders(number, price) values (?,?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, number);
+            ps.setBigDecimal(2, price);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            //5 关闭连接
+            JDBCUtil.close(rs, ps, conn);
+        }
+    }
+    @Override
+    public int queryMaxOrderId() {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int id = 0;
+        try {
+            //1 加载数据库驱动  2 获取数据库连接
+            conn = JDBCUtil.getMysqlConn();
+            StringBuffer sql = new StringBuffer();
+            sql.append("SELECT MAX(id) FROM car_orders");
+            //3 操作数据库——查询一条数据记录
+            ps = conn.prepareStatement(sql.toString());
+            rs = ps.executeQuery();
+            //4 处理返回数据——将返回的一条记录封装到一个JavaBean对象
+            while (rs.next()) {
+                id = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            //5 关闭连接
+            JDBCUtil.close(rs, ps, conn);
+        }
+        return id;
+    }
 
-
-
-    public void saveOrdersDetails(String goods_name,int num,String produce ,int order_id) {
+    public void saveOrdersDetails(String goods_name,int num,String produce ,BigDecimal price,int order_id) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -159,13 +205,14 @@ public class CarGoodsDaoImpl implements CarGoodsDao {
             //1 加载数据库驱动  2 获取数据库连接
             conn = JDBCUtil.getMysqlConn();
             final int[] totalprice = {0};
-                String sql = "INSERT INTO jk_pro_db.car_orders_details(goods_name, num,produce,order_id) values (?,?,?,?)";
+                String sql = "INSERT INTO test.car_orders_details(goods_name, num,produce,price,order_id) values (?,?,?,?,?)";
                 ps = conn.prepareStatement(sql);
                 long randomNum = System.currentTimeMillis();
                 ps.setString(1, goods_name);
                 ps.setInt(2,num);
                 ps.setString(3, produce);
-                ps.setInt(4,order_id);
+                ps.setBigDecimal(4,price);
+                ps.setInt(5,order_id);
                 ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -174,5 +221,6 @@ public class CarGoodsDaoImpl implements CarGoodsDao {
             JDBCUtil.close(rs, ps, conn);
         }
     }
+
 
 }

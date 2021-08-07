@@ -1,32 +1,32 @@
 /*左侧菜单点击*/
-$(".side-menu").on('click', 'li a', function(e) {
+$(".side-menu").on('click', 'li a', function (e) {
 	var animationSpeed = 300;
 	var $this = $(this);
 	var checkElement = $this.next();
 
 	if (checkElement.is('.menu-item-child') && checkElement.is(':visible')) {
-	  checkElement.slideUp(animationSpeed, function() {
-		checkElement.removeClass('menu-open');
-	  });
-	  checkElement.parent("li").removeClass("active");
+		checkElement.slideUp(animationSpeed, function () {
+			checkElement.removeClass('menu-open');
+		});
+		checkElement.parent("li").removeClass("active");
 	}
 	//如果菜单是不可见的
 	else if ((checkElement.is('.menu-item-child')) && (!checkElement.is(':visible'))) {
-	  //获取上级菜单
-	  var parent = $this.parents('ul').first();
-	  //从父级开始找所有打开的菜单并关闭
-	  var ul = parent.find('ul:visible').slideUp(animationSpeed);
-	  //在父级中移出menu-open标记
-	  ul.removeClass('menu-open');
-	  //获取父级li
-	  var parent_li = $this.parent("li");
-	  //打开菜单时添加menu-open标记
-	  checkElement.slideDown(animationSpeed, function() {
-		//添加样式active到父级li
-		checkElement.addClass('menu-open');
-		parent.find('li.active').removeClass('active');
-		parent_li.addClass('active');
-	  });
+		//获取上级菜单
+		var parent = $this.parents('ul').first();
+		//从父级开始找所有打开的菜单并关闭
+		var ul = parent.find('ul:visible').slideUp(animationSpeed);
+		//在父级中移出menu-open标记
+		ul.removeClass('menu-open');
+		//获取父级li
+		var parent_li = $this.parent("li");
+		//打开菜单时添加menu-open标记
+		checkElement.slideDown(animationSpeed, function () {
+			//添加样式active到父级li
+			checkElement.addClass('menu-open');
+			parent.find('li.active').removeClass('active');
+			parent_li.addClass('active');
+		});
 	}
 	//防止有链接跳转
 	e.preventDefault();
@@ -35,7 +35,7 @@ $(".side-menu").on('click', 'li a', function(e) {
 });
 
 /*添加iframe*/
-function addIframe(cur){
+function addIframe(cur) {
 	var $this = cur;
 	var h = $this.attr("href"),
 		m = $this.data("index"),
@@ -44,15 +44,15 @@ function addIframe(cur){
 	if (h == "" || $.trim(h).length == 0) {
 		return false;
 	}
-	
+
 	var fullWidth = $(window).width();
-	if(fullWidth >= 750){
+	if (fullWidth >= 750) {
 		$(".layout-side").show();
-	}else{
+	} else {
 		$(".layout-side").hide();
 	}
-	
-	$(".content-tab").each(function() {
+
+	$(".content-tab").each(function () {
 		if ($(this).data("id") == h) {
 			if (!$(this).hasClass("active")) {
 				$(this).addClass("active").siblings(".content-tab").removeClass("active");
@@ -61,18 +61,18 @@ function addIframe(cur){
 			isHas = true;
 		}
 	});
-	if(isHas){
-		$(".body-iframe").each(function() {
+	if (isHas) {
+		$(".body-iframe").each(function () {
 			if ($(this).data("id") == h) {
 				$(this).show().siblings(".body-iframe").hide();
 			}
 		});
 	}
 	if (!isHas) {
-		var tab = "<a href='javascript:;' class='content-tab active' data-id='"+h+"'>"+ label +" <i class='icon-font'>&#xe617;</i></a>";
+		var tab = "<a href='javascript:;' class='content-tab active' data-id='" + h + "'>" + label + " <i class='icon-font'>&#xe617;</i></a>";
 		$(".content-tab").removeClass("active");
 		$(".tab-nav-content").append(tab);
-		var iframe = "<iframe class='body-iframe' name='iframe"+ m +"' width='100%' height='99%' src='"+ h +"' frameborder='0' data-id='"+ h +"' seamless></iframe>";
+		var iframe = "<iframe class='body-iframe' name='iframe" + m + "' width='100%' height='99%' src='" + h + "' frameborder='0' data-id='" + h + "' seamless></iframe>";
 		$(".layout-main-body").find("iframe.body-iframe").hide().parents(".layout-main-body").append(iframe);
 		addTab($(".content-tab.active"));
 	}
@@ -84,8 +84,8 @@ function addIframe(cur){
 function addTab(cur) {
 	var prev_all = tabWidth($(cur).prevAll()),
 		next_all = tabWidth($(cur).nextAll());
-	var other_width =tabWidth($(".layout-main-tab").children().not(".tab-nav"));
-	var navWidth = $(".layout-main-tab").outerWidth(true)-other_width;//可视宽度
+	var other_width = tabWidth($(".layout-main-tab").children().not(".tab-nav"));
+	var navWidth = $(".layout-main-tab").outerWidth(true) - other_width;//可视宽度
 	var hidewidth = 0;
 	if ($(".tab-nav-content").width() < navWidth) {
 		hidewidth = 0
@@ -106,15 +106,15 @@ function addTab(cur) {
 		}
 	}
 	$(".tab-nav-content").animate({
-		marginLeft: 0 - hidewidth + "px"
-	},
-	"fast")
+			marginLeft: 0 - hidewidth + "px"
+		},
+		"fast")
 }
 
 /*获取宽度*/
 function tabWidth(tabarr) {
 	var allwidth = 0;
-	$(tabarr).each(function() {
+	$(tabarr).each(function () {
 		allwidth += $(this).outerWidth(true)
 	});
 	return allwidth;
@@ -135,7 +135,7 @@ $(".tab-nav-content").on("dblclick", ".content-tab", closePage);
 function leftBtnFun() {
 	var ml = Math.abs(parseInt($(".tab-nav-content").css("margin-left")));
 	var other_width = tabWidth($(".layout-main-tab").children().not(".tab-nav"));
-	var navWidth = $(".layout-main-tab").outerWidth(true)-other_width;//可视宽度
+	var navWidth = $(".layout-main-tab").outerWidth(true) - other_width;//可视宽度
 	var hidewidth = 0;
 	if ($(".tab-nav-content").width() < navWidth) {
 		return false
@@ -156,16 +156,16 @@ function leftBtnFun() {
 		}
 	}
 	$(".tab-nav-content").animate({
-		marginLeft: 0 - hidewidth + "px"
-	},
-	"fast");
+			marginLeft: 0 - hidewidth + "px"
+		},
+		"fast");
 }
 
 /*右按钮方法*/
 function rightBtnFun() {
 	var ml = Math.abs(parseInt($(".tab-nav-content").css("margin-left")));
 	var other_width = tabWidth($(".layout-main-tab").children().not(".tab-nav"));
-	var navWidth = $(".layout-main-tab").outerWidth(true)-other_width;//可视宽度
+	var navWidth = $(".layout-main-tab").outerWidth(true) - other_width;//可视宽度
 	var hidewidth = 0;
 	if ($(".tab-nav-content").width() < navWidth) {
 		return false
@@ -184,9 +184,9 @@ function rightBtnFun() {
 		hidewidth = tabWidth($(tabIndex).prevAll());
 		if (hidewidth > 0) {
 			$(".tab-nav-content").animate({
-				marginLeft: 0 - hidewidth + "px"
-			},
-			"fast");
+					marginLeft: 0 - hidewidth + "px"
+				},
+				"fast");
 		}
 	}
 }
@@ -195,7 +195,7 @@ function rightBtnFun() {
 function navChange() {
 	if (!$(this).hasClass("active")) {
 		var k = $(this).data("id");
-		$(".body-iframe").each(function() {
+		$(".body-iframe").each(function () {
 			if ($(this).data("id") == k) {
 				$(this).show().siblings(".body-iframe").hide();
 				return false
@@ -214,7 +214,7 @@ function closePage() {
 		if ($(this).parents(".content-tab").next(".content-tab").size()) {
 			var next_url = $(this).parents(".content-tab").next(".content-tab:eq(0)").data("id");
 			$(this).parents(".content-tab").next(".content-tab:eq(0)").addClass("active");
-			$(".body-iframe").each(function() {
+			$(".body-iframe").each(function () {
 				if ($(this).data("id") == next_url) {
 					$(this).show().siblings(".body-iframe").hide();
 					return false
@@ -223,12 +223,12 @@ function closePage() {
 			var n = parseInt($(".tab-nav-content").css("margin-left"));
 			if (n < 0) {
 				$(".tab-nav-content").animate({
-					marginLeft: (n + cur_width) + "px"
-				},
-				"fast")
+						marginLeft: (n + cur_width) + "px"
+					},
+					"fast")
 			}
 			$(this).parents(".content-tab").remove();
-			$(".body-iframe").each(function() {
+			$(".body-iframe").each(function () {
 				if ($(this).data("id") == url) {
 					$(this).remove();
 					return false
@@ -238,14 +238,14 @@ function closePage() {
 		if ($(this).parents(".content-tab").prev(".content-tab").size()) {
 			var prev_url = $(this).parents(".content-tab").prev(".content-tab:last").data("id");
 			$(this).parents(".content-tab").prev(".content-tab:last").addClass("active");
-			$(".body-iframe").each(function() {
+			$(".body-iframe").each(function () {
 				if ($(this).data("id") == prev_url) {
 					$(this).show().siblings(".body-iframe").hide();
 					return false
 				}
 			});
 			$(this).parents(".content-tab").remove();
-			$(".body-iframe").each(function() {
+			$(".body-iframe").each(function () {
 				if ($(this).data("id") == url) {
 					$(this).remove();
 					return false
@@ -254,7 +254,7 @@ function closePage() {
 		}
 	} else {
 		$(this).parents(".content-tab").remove();
-		$(".body-iframe").each(function() {
+		$(".body-iframe").each(function () {
 			if ($(this).data("id") == url) {
 				$(this).remove();
 				return false
@@ -266,51 +266,52 @@ function closePage() {
 }
 
 /*循环菜单*/
-function initMenu(menu,parent){
-	for(var i=0; i<menu.length; i++){   
+function initMenu(menu, parent) {
+	for (var i = 0; i < menu.length; i++) {
 		var item = menu[i];
 		var str = "";
-		try{
-			if(item.isHeader == "1"){
-				str = "<li class='menu-header'>"+item.name+"</li>";
+		try {
+			if (item.isHeader == "1") {
+				str = "<li class='menu-header'>" + item.name + "</li>";
 				$(parent).append(str);
-				if(item.childMenus != ""){
-					initMenu(item.childMenus,parent);
+				if (item.childMenus != "") {
+					initMenu(item.childMenus, parent);
 				}
-			}else{
+			} else {
 				item.icon == "" ? item.icon = "&#xe610" : item.icon = item.icon;
-				if(item.childMenus == ""){
-					str = "<li><a href='"+item.url+"'><i class='icon-font'>"+item.icon+"</i><span>"+item.name+"</span></a></li>";
+				if (item.childMenus == "") {
+					str = "<li><a href='" + item.url + "'><i class='icon-font'>" + item.icon + "</i><span>" + item.name + "</span></a></li>";
 					$(parent).append(str);
-				}else{
-					str = "<li><a href='"+item.url+"'><i class='icon-font '>"+item.icon+"</i><span>"+item.name+"</span><i class='icon-font icon-right'>&#xe60b;</i></a>";
-					str +="<ul class='menu-item-child' id='menu-child-"+item.id+"'></ul></li>";
+				} else {
+					str = "<li><a href='" + item.url + "'><i class='icon-font '>" + item.icon + "</i><span>" + item.name + "</span><i class='icon-font icon-right'>&#xe60b;</i></a>";
+					str += "<ul class='menu-item-child' id='menu-child-" + item.id + "'></ul></li>";
 					$(parent).append(str);
-					var childParent = $("#menu-child-"+item.id);
-					initMenu(item.childMenus,childParent);
+					var childParent = $("#menu-child-" + item.id);
+					initMenu(item.childMenus, childParent);
 				}
 			}
-		}catch(e){}
+		} catch (e) {
+		}
 	}
 }
 
 /*头部下拉框移入移出*/
-$(document).on("mouseenter",".header-bar-nav",function(){
+$(document).on("mouseenter", ".header-bar-nav", function () {
 	$(this).addClass("open");
 });
-$(document).on("mouseleave",".header-bar-nav",function(){
+$(document).on("mouseleave", ".header-bar-nav", function () {
 	$(this).removeClass("open");
 });
 
 /*左侧菜单展开和关闭按钮事件*/
-$(document).on("click",".layout-side-arrow",function(){
-	if($(".layout-side").hasClass("close")){
+$(document).on("click", ".layout-side-arrow", function () {
+	if ($(".layout-side").hasClass("close")) {
 		$(".layout-side").removeClass("close");
 		$(".layout-main").removeClass("full-page");
 		$(".layout-footer").removeClass("full-page");
 		$(this).removeClass("close");
 		$(".layout-side-arrow-icon").removeClass("close");
-	}else{
+	} else {
 		$(".layout-side").addClass("close");
 		$(".layout-main").addClass("full-page");
 		$(".layout-footer").addClass("full-page");
@@ -320,22 +321,22 @@ $(document).on("click",".layout-side-arrow",function(){
 });
 
 /*头部菜单按钮点击事件*/
-$(".header-menu-btn").click(function(){
+$(".header-menu-btn").click(function () {
 	$(".layout-side").removeClass("close");
 	$(".layout-main").removeClass("full-page");
 	$(".layout-footer").removeClass("full-page");
 	$(".layout-side-arrow").removeClass("close");
 	$(".layout-side-arrow-icon").removeClass("close");
-	
+
 	$(".layout-side").slideToggle();
 });
 
 /*左侧菜单响应式*/
-$(window).resize(function() {  
-	var width = $(this).width();  
-	if(width >= 750){
+$(window).resize(function () {
+	var width = $(this).width();
+	if (width >= 750) {
 		$(".layout-side").show();
-	}else{
+	} else {
 		$(".layout-side").hide();
 	}
 });
@@ -343,28 +344,86 @@ $(window).resize(function() {
 /*
   初始化加载
 */
-$(function(){
-	var bookUrl = _appPath +"book/book.action";
-	var menu = [{"id":"1","name":"主菜单","parentId":"0","url":"","icon":"","order":"1","isHeader":"1","childMenus":[
-					{"id":"3","name":"物品信息","parentId":"1","url":"","icon":"&#xe604;","order":"1","isHeader":"0","childMenus":[
-						{"id":"31","name":"物品列表","parentId":"3","url":""+_appPath+"cargoods/queryList","icon":"","order":"1","isHeader":"0","childMenus":""}
-                        ,{"id":"31","name":"下单列表","parentId":"3","url":""+_appPath+"cargoods/queryorders","icon":"","order":"1","isHeader":"0","childMenus":""}
+$(function () {
+	var bookUrl = _appPath + "book/book.action";
+	var menu = [{
+		"id": "1", "name": "主菜单", "parentId": "0", "url": "", "icon": "", "order": "1", "isHeader": "1", "childMenus": [
+			{
+				"id": "3",
+				"name": "物品信息",
+				"parentId": "1",
+				"url": "",
+				"icon": "&#xe604;",
+				"order": "1",
+				"isHeader": "0",
+				"childMenus": [
+					{
+						"id": "31",
+						"name": "物品列表",
+						"parentId": "3",
+						"url": "" + _appPath + "cargoods/queryList",
+						"icon": "",
+						"order": "1",
+						"isHeader": "0",
+						"childMenus": ""
+					}
+					, {
+						"id": "31",
+						"name": "下单列表",
+						"parentId": "3",
+						"url": "" + _appPath + "cargoods/queryorders",
+						"icon": "",
+						"order": "1",
+						"isHeader": "0",
+						"childMenus": ""
+					}
+					, {
+						"id": "31",
+						"name": "购物车列表",
+						"parentId": "3",
+						"url": "" + _appPath + "cargoods/getCart",
+						"icon": "",
+						"order": "1",
+						"isHeader": "0",
+						"childMenus": ""
+					}
 
-                    ]}
-					// ,
-					// {"id":"4","name":"测试","parentId":"1","url":"","icon":"&#xe602;","order":"1","isHeader":"0","childMenus":[
-					// 	{"id":"41","name":"用户借书","parentId":"4","url":""+_appPath+"jsp/frame/borrowBooks.jsp","icon":"","order":"1","isHeader":"0","childMenus":""},
-					// 	{"id":"42","name":"用户还书","parentId":"4","url":""+_appPath+"jsp/frame/returnBook.jsp","icon":"","order":"1","isHeader":"0","childMenus":""}
-					// ]}
-				]}
-				,
-				{"id":"2","name":"查询统计","parentId":"0","url":"","icon":"","order":"2","isHeader":"1","childMenus":[
-					{"id":"21","name":"统计消费金额","parentId":"16","url":""+_appPath+"carGoods/repertory.jsp","icon":"","order":"1","isHeader":"0","childMenus":""}
-					//,
-					//{"id":"22","name":"已借出书籍","parentId":"16","url":""+_appPath+"jsp/frame/borrowed.jsp","icon":"","order":"1","isHeader":"0","childMenus":""}
 
-					]}
-				];
-	initMenu(menu,$(".side-menu"));
+				]
+			}
+			// ,
+			// {"id":"4","name":"测试","parentId":"1","url":"","icon":"&#xe602;","order":"1","isHeader":"0","childMenus":[
+			// 	{"id":"41","name":"用户借书","parentId":"4","url":""+_appPath+"jsp/frame/borrowBooks.jsp","icon":"","order":"1","isHeader":"0","childMenus":""},
+			// 	{"id":"42","name":"用户还书","parentId":"4","url":""+_appPath+"jsp/frame/returnBook.jsp","icon":"","order":"1","isHeader":"0","childMenus":""}
+			// ]}
+		]
+	}
+		,
+		{
+			"id": "2",
+			"name": "查询统计",
+			"parentId": "0",
+			"url": "",
+			"icon": "",
+			"order": "2",
+			"isHeader": "1",
+			"childMenus": [
+				{
+					"id": "21",
+					"name": "统计消费金额",
+					"parentId": "16",
+					"url": "" + _appPath + "carGoods/repertory.jsp",
+					"icon": "",
+					"order": "1",
+					"isHeader": "0",
+					"childMenus": ""
+				}
+				//,
+				//{"id":"22","name":"已借出书籍","parentId":"16","url":""+_appPath+"jsp/frame/borrowed.jsp","icon":"","order":"1","isHeader":"0","childMenus":""}
+
+			]
+		}
+	];
+	initMenu(menu, $(".side-menu"));
 	$(".side-menu > li").addClass("menu-item");
 });
